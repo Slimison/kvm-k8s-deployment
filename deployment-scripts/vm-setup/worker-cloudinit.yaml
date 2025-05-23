@@ -1,0 +1,34 @@
+#cloud-config
+hostname: k8s-worker
+fqdn: k8s-worker.local
+manage_etc_hosts: true
+# (same as controller — copy everything else)
+
+#cloud-config
+hostname: k8s-controller
+fqdn: k8s-controller.local
+manage_etc_hosts: true
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+dryDBTxD8I7Hw/HVe3L1HGeeSFX2Lgyctwxt63SVg kube-vm
+package_update: true
+package_upgrade: true
+packages:
+  - docker.io
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+runcmd:
+  - curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+  - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+  - apt-get update
+  - apt-get install -y kubelet kubeadm kubectl
+  - apt-mark hold kubelet kubeadm kubectl
+  - systemctl enable docker
+  - systemctl start docker

@@ -1,0 +1,11 @@
+vm:
+  cpu: 2
+  ram: 4096   # in MB
+  disk: 20    # in GB
+
+kubernetes:
+  version: "1.29.0"
+
+cloud_init_mode: full
+ssh_public_key: |
+  ssh-ed25519 AAAAC3Nz... replace_this_with_your_key
